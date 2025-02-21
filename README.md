@@ -5,5 +5,5 @@ Implementation of test task for AvMap
 # use QT 6.8.0
 # in Projects -> Run: enable "Run in terminal" for testing under "Run" command in Qt Creator
 # if using as independent .exe file, dont forget to put qt dlls in executable root dir.
-# there are debug dlls in this repo, but if you dont trust those
-# feel free to use your own.
+# some of those 64bit specific, so I suggest you use your system's dlls
+# tested on Windows 10
