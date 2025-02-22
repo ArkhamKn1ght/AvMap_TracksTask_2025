@@ -16,6 +16,15 @@ int main(int argc, char *argv[]) {
     QTextStream in(stdin);
     QTextStream out(stdout);
 
+    auto returnWrapper = [&](int code, const QString & _message) {
+        if(_message.size() > 0)
+            qWarning() << _message;
+
+        out << "Press ENTER to exit" << Qt::flush;
+        in.readLine();
+        return code;
+    };
+
     out << "Enter filepath: " << Qt::flush;
     const QString filepath = in.readLine();
 
@@ -24,28 +33,22 @@ int main(int argc, char *argv[]) {
 
     bool okFlag = true;
     const double distance = strDistance.toDouble(&okFlag);
-    if(!okFlag) {
-        qWarning() << "Invalid distance value!";
-        return -4;
-    }
+    if(!okFlag)
+        return returnWrapper( -4, "Invalid distance value!" );
 
-    if( !filter.ReadKML(filepath) ) {
-        qWarning() << "Failed to read KML file!";
-        return -1;
-    }
-    size_t filteredWaypointCount = filter.FilterWaypoint(0.1);
-    if( filteredWaypointCount == 0 ) {
-        qWarning() << "Failed to filter waypoints!";
-        return -2;
-    }
+    if( !filter.ReadKML(filepath) )
+        return returnWrapper( -1, "Failed to read KML file!" );
 
-    if( !filter.WriteKML("TrackItaly.kml") ) {
-        qWarning() << "Failed to write KML file!";
-        return -3;
-    }
+    size_t filteredWaypointCount = filter.FilterWaypoint(distance);
+    if( filteredWaypointCount == 0 )
+        return returnWrapper( -2, "Failed to filter waypoints!" );
+
+    if( !filter.WriteKML("TrackItaly.kml") )
+        return returnWrapper( -3, "Failed to write KML file!" );
+
     out << "Filtered waypoints file: " << KMLFilter::UPDATED_FILE_PREFIX + filepath << Qt::endl;
     out << "Minimal distance value : " << distance << " km" << Qt::endl;
     out << "Source KML coordinate count: " << filter.GetRawCoordinateCount() << Qt::endl;
     out << "Result KML coordinate count: " << filter.GetFinalCoordinateCount() << Qt::endl;
-    return 0;
+    return returnWrapper( 0, "" );
 }
