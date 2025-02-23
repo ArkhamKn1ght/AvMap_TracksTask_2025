@@ -9,6 +9,8 @@
 
 
 int main(int argc, char *argv[]) {
+
+
     QCoreApplication a(argc, argv);
 
     KMLFilter filter;
@@ -24,12 +26,22 @@ int main(int argc, char *argv[]) {
         in.readLine();
         return code;
     };
+    QString filepath;
+    QString strDistance;
+    if(argc < 3 ) {
+        qWarning() << "Command line args were not provided or were passed incorrectly.\n"
+                   << "Usage: .\\AvMap_TestTask.exe <filepath> <distance(km)>\n";
+        out << "Enter filepath: " << Qt::flush;
+        filepath = in.readLine();
+        out << "Enter distance(in km): " << Qt::flush;
+        strDistance = in.readLine();
+    } else {
+        filepath = argv[1];
+        strDistance = argv[2];
+    }
 
-    out << "Enter filepath: " << Qt::flush;
-    const QString filepath = in.readLine();
 
-    out << "Enter distance(in km): " << Qt::flush;
-    const QString strDistance = in.readLine();
+
 
     bool okFlag = true;
     const double distance = strDistance.toDouble(&okFlag);
